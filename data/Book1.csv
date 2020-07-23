@@ -1,0 +1,146 @@
+JobTitle,SalaryEstimate,JobDescription,Rating,Company Name,Location,Headquarters,Size,Founded,TypeOfOwnership,Industry,Sector,Revenue,Competitors,EasyApply
+Data Engineer,$80K-$150K (Glassdoor est.),"Company Description
+Sagence is a management advisory firm dedicated to helping our clients optimize the value of their data assets. From thinking to doing, Sagence works with leading institutions in the acquisition, evaluation, development and management of their critical data assets and in the application of analytics to discover new insights, shorten time-to-value, and drive competitive advantage.
+**All candidates must be currently authorized to work in the US on a full-time basis. Sagence does not provide sponsorship for work visas upon hire or once on board.**
+Job Overview
+Sagence is looking for experienced, client-facing Data Engineers to help us build and sustain our client’s data capabilities and our competitive advantage. Along with the requirements below, candidates must possess deep, practical experience in one or more of the following Data Management competencies; data warehousing, data lakes, reference data or master data management, data architecture, data modeling, data governance, data analysis, business intelligence.
+Skills & Requirements:
+MUST BE HANDS ON. Candidates should have system development experience and proficiency with system development methodologies and possess the following skills and knowledge:
+Must have significant hands-on experience with various IT concepts of data management/engineering (ETL, data modeling, data warehousing, etc.)
+Must have significant hands-on experience with SQL, data profiling, and data discovery
+Experience building business intelligence, analytics, or reporting solutions - either front-end consumption mechanisms (e.g., Microsoft, Tableau & Qlik) or supply of data for these purposes
+Familiarity with data architecture principles/approaches, data environment infrastructure considerations, and data modeling principles/approaches
+Ability to drive out technical requirements with business and IT stakeholders for implementations of data solutions
+Hands-on experience with Agile delivery methodology
+Prior professional experience in an IT management, management consulting, or client facing role is preferred
+Knowledge of the Financial Services, Insurance, Healthcare or Retail industries is preferred
+Demonstrated ability in engaging, communicating, and presenting to stakeholders across both business and technology functions
+Tools and Technology:
+Proficient at leveraging tools and technology to drive value for clients. Examples include the following;
+Database Management Tools:
+Relational – e.g. Oracle, MySQL, Microsoft SQL Server, PostgreSQL, DB, or similar
+NoSQL – e.g. MongoDB, Couchbase, DataStax, Redix, MarkLogic, or similar
+Cloud – e.g. AWS, Azure, xxx, xxx, xxx
+ETL Tools - e.g. Informatica, Talend, Microsoft SSIS, or similar
+Data Modeling tools - e.g., Toad, ERWin, ER/Studio, PowerDesigner, IBM Data Architect, or similar
+Industry Leading BI tools - e.g., Business Objects, Microsoft, Cognos, Tableau, OBIEE, Qlickview, or similar
+General:
+Must be currently authorized to work in the US on a full-time basis. Sagence does not provide sponsorship for work visas
+3+ years of professional experience working in a related role
+Must be collaborative, innovative, curious, and resourceful, and exhibit a positive attitude
+Strong desire to work on interesting projects with smart and creative people
+Willingness to travel up to 80% of the week (M-Th)
+Chicago or New York area candidates preferred, but will consider candidates in other parts of U.S.
+Our Culture
+Passionate, diverse, creative, genuine, flexible, hands-on…these are just a few of the words that describe our culture. Our Partners are deeply involved in the client work on a daily basis. We have a high-energy workplace with a focus on producing high-quality, impactful results. We are committed to equality of opportunity, fairness, work and lifestyle balance, and mutual respect. We promote an entrepreneurial spirit by encouraging individual initiative and foster a collaborative culture and work environment which includes open communication and on-going learning. We build teamwork through small, dedicated teams who continuously teach each other and learn from one another. We strongly believe these characteristics enable our employees to develop to their fullest potential. To learn more, please visit us at www.sagenceconsulting.com",4.5,"Sagence
+4.5","New York, NY","Chicago, IL",1 to 50 employees,2009,Company - Private,Consulting,Business Services,$10 to $25 million (USD),"WCI Consulting, PwC",-1
+Senior Data Engineer (Healthcare Domain experience required),$80K-$150K (Glassdoor est.),"Key Responsibilities
+
+- Architect, build, and maintain efficient data pipelines, utilizing a variety of data access technologies (REST APIs, FTP, SQL, S3)
+
+- Work with analytics team to help with automating reporting needs leveraging various solutions like REST APIs or BI tools
+
+- End-to-end development, starting from requirements gathering with stakeholders to deployment to production systems
+
+- Lead greenfield development of innovative applications, analysis, and systems
+
+- Contribute to development of a rapidly growing, integrated datawarehouse that will provide a complete vision of the entire healthcare landscape
+
+- Work with large, alternative datasets (100s of millions of data points) to extract insights and proactively monitor trends
+
+Minimum Qualifications
+
+· Advanced SQL Knowledge
+
+· Proficient in object-oriented development (C#, Java, etc)
+
+· Proficient in creating REST Web Services using C#/Python/Node
+
+· Experience working with large data sets (50+ million rows)
+
+· Ability to architect end-to-end ETL pipelines
+
+· Comfortable writing unit/integration tests, implementing logging/monitoring, and maintaining reliability of internal processes
+
+· Familiarity with software development best practices: Dependency Injection, ORMs, Test-Driven Development, Modular design, etc.
+
+Preferred Skills
+
+· Architect-level experience with development using Cloud tools (ideally Azure)
+
+· Experience with distributed datastores such as Databricks, Spark/Hadoop, Snowflake NoSql, etc.
+
+· Web development in a full-stack capacity (ideally Angular)
+
+· Business Intelligence Experience (Power BI, Tableau, etc.)
+
+· Experience working with EMR or Claims data
+
+Benefits
+
+· Top-of-the-line, company sponsored healthcare insurance
+
+· Unlimited meals
+
+· Full-floor, state-of-the-art gym only for employees with showers, protein shakes, etc
+
+· Always-stocked kitchens/resource rooms
+
+· Monthly happy hours
+
+· Great work-life balance
+
+· Data driven culture at all levels of the firm",3.4,"Enterprise Integration
+3.4","New York, NY","Jacksonville, FL",51 to 200 employees,1998,Company - Private,IT Services,Information Technology,$25 to $50 million (USD),-1,-1
+Data Engineers,$80K-$150K (Glassdoor est.),"Overview
+
+Job description
+
+Position Overview:
+
+Seeking a highly qualified Data Engineer with a track record of managing and architecting complex data platforms. As a member of the Data Engineering and Operations Team, the Data Engineer will work on data management projects for a wide variety of companies including Cerberus portfolio companies. This person will be responsible to creating programs for loading, transforming, and validating data. This person will also be responsible to lead small teams responsible for the end to end implementation of data platforms for our clients. We are seeking a “player/coach” with the adaptability and flexibility to develop strategies but also get into the weeds and write code. As such, a successful candidate will have deep technical and management expertise across a variety of methodologies as well as have demonstrated management skills.
+
+Responsibilities:
+Design and build data management platforms
+Design and build scalable data platforms to securely ingest, process, validate, analyze and publish data
+Perform POC (proof of concepts), choose the right tools and technologies to be used
+Manage large & complex data and analytical projects: data transformation, exploration, performance evaluation & testing
+Move existing ETL jobs from traditional data warehouse processing to the big data processing platform, ensure that the jobs are designed to scale
+Manage and lead data engineering projects
+Collaborate with internal and portfolio company stakeholders in a broad range of sectors to identify business use cases and develop solutions in driving impact through data and analytics
+Manage and execute the successful delivery of the data (ETL/ELT) pipelines, analytics platforms and reporting tools to meet business needs
+Perform analyses of large structured and unstructured data to solve multiple and complex business problems utilizing advanced statistical techniques, and specialized expertise in the organization and/or industry
+Assess data management platforms
+Assess the complete landscape of a data refinery (data discovery, data loading, data transformation, data validation and data publish)
+Business Knowledge/Technical Skills:
+5+ years professional work experience as a data engineer
+Extensive experience building highly optimized and scalable data infrastructures using traditional, open sources and cloud computing technologies
+Deep experience in data warehousing, data architecture, data quality processes, data warehousing design and implementation, table structure, fact and dimension tables, logical and physical database design, data modeling, reporting process metadata, and ETL processes
+Proven experience in developing analytics strategy, roadmap and delivering major change initiatives
+Proven experience in negotiating contracts, license optimization, service levels & managing vendors
+Ability to set and manage priorities judiciously
+Knowledge of: data processing platforms like Hadoop, Spark, Hive, AWS (EMR, Kinesis, lambda, glue) Azure (HDInsight, data factory); airflow; coding best practices (git/stash usage); python, R; Java/Scala; writing production and modular code
+Other:
+Bachelor's degree required
+Master’s degree in in Computer Science, Statistics, Economics, Physics, Engineering, Mathematics, or other closely related field is preferred
+This position will be based out of New York City and will require travel
+Job description Position Overview: Seeking a highly qualified Data Engineer with a track record of managing and architecting complex data platforms. As a member of the Data Engineering and Operations Team, the Data Engineer will work on data management projects for a wide variety of companies including Cerberus portfolio companies. This person will be responsible to creating programs for loading, transforming, and validating data. This person will also be responsible to lead small teams responsible for the end to end implementation of data platforms for our clients. We are seeking a “player/coach” with the adaptability and flexibility to develop strategies but also get into the weeds and write code. As such, a successful candidate will have deep technical and management expertise across a variety of methodologies as well as have demonstrated management skills. Responsibilities: Design and build data management platforms Design and build scalable data platforms to securely ingest, process, validate, analyze and publish data Perform POC (proof of concepts), choose the right tools and technologies to be used Manage large & complex data and analytical projects: data transformation, exploration, performance evaluation & testing Move existing ETL jobs from traditional data warehouse processing to the big data processing platform, ensure that the jobs are designed to scale Manage and lead data engineering projects Collaborate with internal and portfolio company stakeholders in a broad range of sectors to identify business use cases and develop solutions in driving impact through data and analytics Manage and execute the successful delivery of the data (ETL/ELT) pipelines, analytics platforms and reporting tools to meet business needs Perform analyses of large structured and unstructured data to solve multiple and complex business problems utilizing advanced statistical techniques, and specialized expertise in the organization and/or industry Assess data management platforms Assess the complete landscape of a data refinery (data discovery, data loading, data transformation, data validation and data publish) Business Knowledge/Technical Skills: 5+ years professional work experience as a data engineer Extensive experience building highly optimized and scalable data infrastructures using traditional, open sources and cloud computing technologies Deep experience in data warehousing, data architecture, data quality processes, data warehousing design and implementation, table structure, fact and dimension tables, logical and physical database design, data modeling, reporting process metadata, and ETL processes Proven experience in developing analytics strategy, roadmap and delivering major change initiatives Proven experience in negotiating contracts, license optimization, service levels & managing vendors Ability to set and manage priorities judiciously Knowledge of: data processing platforms like Hadoop, Spark, Hive, AWS (EMR, Kinesis, lambda, glue) Azure (HDInsight, data factory); airflow; coding best practices (git/stash usage); python, R; Java/Scala; writing production and modular code Other: Bachelor's degree required Master’s degree in in Computer Science, Statistics, Economics, Physics, Engineering, Mathematics, or other closely related field is preferred This position will be based out of New York City and will require travel
+This is Company overview ...
+
+Which company? Recruiting Company or Client Company???",5,"Maestro Technologies
+5.0","New York, NY","Trenton, NJ",51 to 200 employees,2003,Company - Private,IT Services,Information Technology,$5 to $10 million (USD),-1,-1
+Client Trade Support Engineer,$80K-$150K (Glassdoor est.),"About the Position
+
+
+This position will support Jane Street’s client-facing trading business, and consists of a mix of operational and project-oriented work.
+
+The operational side of the job is focused on monitoring the health of Jane Street’s client-facing trading infrastructure, and working with the trading desks and technology groups to understand and react to issues as they arise during the trading day. Additionally, the person in this role will assist external clients by acting as a first point of contact for technical questions, data queries, and troubleshooting. Quick thinking and effective communication are important parts of this job.
+
+About You
+
+
+When not on the support rotation, engineers will work on projects to improve the trading infrastructure, such as:
+Writing code to improve the stack of tools and systems for managing, monitoring, and configuring Jane Street’s trading infrastructure.
+Working with Trading Systems developers to improve Jane Street's client-facing trading infrastructure.
+Onboarding new clients onto Jane Street's trading systems.",4.8,"Jane Street
+4.8","New York, NY","New York, NY",501 to 1000 employees,2000,Company - Private,Investment Banking & Asset Management,Finance,Unknown / Non-Applicable,-1,-1

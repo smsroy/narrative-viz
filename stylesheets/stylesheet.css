@@ -79,7 +79,7 @@ a {
   .project-name {
     font-size: 3.25rem; } }
 
-@media screen and (min-width: 42em) and (max-width: 64em) {
+@media screen and (min-width: 24em) and (max-width: 64em) {
   .project-name {
     font-size: 2.25rem; } }
 

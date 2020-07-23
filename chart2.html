@@ -44,7 +44,7 @@
     <section class="main-content">
       <h3>
         <span aria-hidden="true" class="octicon octicon-link"></span>Jobs
-        Summary
+        Analysis Summary
       </h3>
       <p>
         Below is the summary representation of the Glassdoor Data Engineers job
@@ -86,7 +86,8 @@
         const data = await d3.csv("data/DataEngineer1.csv");
 
         function loadPage(id) {
-          dest = "chart2.html" + "?origin=" + id;
+          alert("I am called");
+          dest = "/chart2.html" + "?origin=" + id;
           console.log(dest);
           window.location = dest;
         }
@@ -168,7 +169,7 @@
           })
           .on("mouseout", () => tooltip.style("visibility", "hidden"))
           .on("click", (d) => {
-            loadPage(d.key);
+            this.loadPage(d.key);
           });
 
         // Tool Tip mouse hover
@@ -279,10 +280,7 @@
               .style("top", d3.event.pageY - 10 + "px")
               .style("left", d3.event.pageX + 10 + "px");
           })
-          .on("mouseout", () => tooltip.style("visibility", "hidden"))
-          .on("click", (d, i) => {
-            loadPage(getKey(i));
-          });
+          .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
         //X-scale
         var xs1 = d3

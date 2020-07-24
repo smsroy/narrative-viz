@@ -87,7 +87,7 @@
 
         function loadPage(id) {
           dest = "chart2.html" + "?origin=" + id;
-          console.log(dest);
+          //console.log(dest);
           window.location = dest;
         }
 
@@ -133,6 +133,18 @@
           ])
           .range([yheight, 0]);
 
+        var colorrn = d3.scaleOrdinal(d3.schemeCategory10); //Not working, color should be same as pie chart
+
+        // Tool Tip mouse hover
+        var tooltip = d3
+          .select("body")
+          .append("div")
+          .attr("class", "tooltip")
+          .style("position", "absolute")
+          .style("z-index", 10)
+          .style("visibility", "hidden")
+          .text("Simple text");
+
         // Chart
         d3.select("svg")
           .attr("width", width)
@@ -156,6 +168,10 @@
           .attr("height", function (d) {
             return yheight - ys(d.value);
           })
+          .attr("fill", function (d, i) {
+            //Not working, color should be same as pie chart
+            return "blue";
+          })
           .text((d) => d.value)
           .on("mouseover", (d) => {
             tooltip.text(d.key + " : " + d.value.toFixed(0));
@@ -170,16 +186,6 @@
           .on("click", (d) => {
             loadPage(d.key);
           });
-
-        // Tool Tip mouse hover
-        var tooltip = d3
-          .select("body")
-          .append("div")
-          .attr("class", "tooltip")
-          .style("position", "absolute")
-          .style("z-index", 10)
-          .style("visibility", "hidden")
-          .text("Simple text");
 
         //y - axis
         d3.select("svg")
@@ -240,10 +246,11 @@
         ///////////////////////////////////////////////////// Bar Chart End ///////////////////////////////////////
 
         ///////////////////////////////////////////////////// Pie Chart ///////////////////////////////////////////
-        var totaljobs = 2528; //Find total jobs number
+
+        var totaljobs = d3.sum(graphdata, (d) => d.value); //Find total jobs number
         var piedata = graphdata.map(function (d) {
           var val = (d.value / totaljobs) * 100;
-          console.log(val);
+          //console.log(val);
           return val;
         });
         var color = d3.schemeCategory10;

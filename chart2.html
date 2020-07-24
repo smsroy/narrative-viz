@@ -44,14 +44,17 @@
     <section class="main-content">
       <h3>
         <span aria-hidden="true" class="octicon octicon-link"></span>Jobs
-        Analysis Summary
+        Summary
       </h3>
       <p>
         Below is the summary representation of the Glassdoor Data Engineers job
         dataset. The analysis may help in finding job as a Data Engineer.
       </p>
-
+      <div id="selectdiv"></div>
       <div>
+        <div>
+          <label id="chartlabel" for="chartlabel"></label>
+        </div>
         <svg width="600" height="600"></svg>
       </div>
 
@@ -71,29 +74,34 @@
     </section>
 
     <script>
-      async function init() {
-        var margin = {
-          top: 50,
-          right: 50,
-          bottom: 50,
-          left: 50,
-        };
-        var width = 1000;
-        var height = 500;
-        var xwidth = width / 2 - 2 * margin.right - 2 * margin.left;
-        var yheight = height - 2 * margin.top - 2 * margin.bottom;
+      //Global Variable
+      var data; // this one holds csv data
+      var origin;
+      var margin = {
+        top: 50,
+        right: 50,
+        bottom: 50,
+        left: 50,
+      };
+      var width = 800;
+      var height = 500;
+      var xwidth = width - 2 * margin.right - 2 * margin.left;
+      var yheight = height - 2 * margin.top - 2 * margin.bottom;
+      const addfactor = 10;
 
-        const data = await d3.csv("data/DataEngineer1.csv");
-
-        function loadPage(id) {
-          alert("I am called");
-          dest = "/chart2.html" + "?origin=" + id;
-          console.log(dest);
-          window.location = dest;
+      //Function to do array value sum
+      Array.prototype.sum = function (prop) {
+        var total = 0;
+        for (var i = 0, _len = this.length; i < _len; i++) {
+          total += this[i][prop];
         }
+        return total;
+      };
 
-        ///////////////////////////////////////////////////// Bar Chart ///////////////////////////////////////
-        var data1 = d3
+      //Function to Load jobs list
+      function loadJobs(data, selectedval) {
+        var origin = selectedval;
+        var seldata = d3
           .nest()
           .key(function (d) {
             return d.JobTitle == "" ? "None" : d.JobTitle;
@@ -105,17 +113,123 @@
           })
           .entries(data);
 
+        seldata.sort(function (a, b) {
+          return d3.descending(+a.value, +b.value);
+        });
+        var jobdata = seldata.slice(0, 20); // Top 20 elements
+
+        // Commented section to add other jobs and number
+        // var remjobdata = seldata.slice(20); // remaining 20 elements
+        // console.log(remjobdata.sum("value"));
+        // const newElement = [{ key: "Other", value: remjobdata.sum("value") }];
+        // jobdata = newElement.concat(jobdata); // added others as the first element
+        // console.log(jobdata);
+
+        //Sort again
+        jobdata.sort(function (a, b) {
+          return d3.descending(+a.value, +b.value);
+        });
+
+        //Now load data to the select
+        var jobtitlelabel = document.createElement("label");
+        jobtitlelabel.innerHTML =
+          "Choose a Job to see chart distribution accordingly :";
+        jobtitlelabel.htmlFor = "jobs";
+
+        var selectjobtitle = document.createElement("select");
+        selectjobtitle.name = "jobtitle";
+        selectjobtitle.id = "jobtitle";
+        selectjobtitle.addEventListener("change", function (event) {
+          origin = document.getElementById("jobtitle").value;
+          //Show chart
+          showChart(data, origin);
+        });
+
+        //add one first option - All
+        var jobtitleoption = document.createElement("option");
+        jobtitleoption.value = "All";
+        jobtitleoption.text = "All";
+        selectjobtitle.appendChild(jobtitleoption);
+
+        for (const val of jobdata) {
+          jobtitleoption = document.createElement("option");
+          jobtitleoption.value = val.key;
+          jobtitleoption.text = val.key + ":" + val.value;
+          if (val.key == origin) jobtitleoption.selected = true;
+          selectjobtitle.appendChild(jobtitleoption);
+        }
+
+        //First remove all elements and then add
+        document.getElementById("selectdiv").innerHTML = null;
+        document
+          .getElementById("selectdiv")
+          .appendChild(jobtitlelabel)
+          .appendChild(selectjobtitle);
+      }
+
+      function loadPage(id) {
+        dest = "chart2.html" + "?origin=" + id;
+        //console.log(dest);
+        window.location = dest;
+      }
+
+      //Function called on body onload
+      async function init() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        var origin =
+          urlParams.get("origin") == undefined ||
+          urlParams.get("origin") == null ||
+          urlParams.get("origin") == ""
+            ? "All"
+            : urlParams.get("origin");
+        // console.log(origin);
+
+        data = await d3.csv("data/DataEngineer1.csv");
+
+        //Load Job select
+        loadJobs(data, origin);
+
+        //Show chart
+        showChart(data, origin);
+      }
+
+      //Function to draw chart
+      function showChart(data, origin) {
+        var data1 = d3
+          .nest()
+          .key(function (d) {
+            var keyval;
+            if (d.TypeOfOwnership == "") keyval = "Other";
+            else if (d.TypeOfOwnership == "-1") keyval = "Unknown";
+            else keyval = d.TypeOfOwnership;
+            if (origin == "All") return keyval;
+            else if (d.JobTitle == origin) return keyval;
+            else return "Filter";
+          })
+          .rollup(function (d) {
+            return d3.sum(d, function (g) {
+              return 1;
+            });
+          })
+          .entries(data);
+
         data1.sort(function (a, b) {
           return d3.descending(+a.value, +b.value);
         });
-        var graphdata = data1.slice(0, 20); // Top 20 elements
-        //console.log(graphdata);
+
+        //Removing "Filter" record - as it is for other than the passed origin
+        var data2 = data1.filter((x) => {
+          return x.key != "Filter";
+        });
+        var toodata = data2.slice(0, 20); // Top 20 elements
+        // console.log(toodata);
 
         //X-scale
         var xs = d3
           .scaleBand()
           .domain(
-            graphdata.map(function (d) {
+            toodata.map(function (d) {
               return d.key;
             })
           )
@@ -125,14 +239,31 @@
         var ys = d3
           .scaleLinear()
           .domain([
-            d3.min(graphdata, function (d) {
+            d3.min(toodata, function (d) {
               return d.value;
             }),
-            d3.max(graphdata, function (d) {
+            d3.max(toodata, function (d) {
               return d.value;
             }),
           ])
           .range([yheight, 0]);
+
+        var colorrn = d3.scaleOrdinal(d3.schemeCategory10); //Not working, color should be same as pie chart
+
+        // Tool Tip mouse hover
+        var tooltip = d3
+          .select("body")
+          .append("div")
+          .attr("class", "tooltip")
+          .style("position", "absolute")
+          .style("z-index", 10)
+          .style("visibility", "hidden")
+          .text("Simple text");
+
+        //Before drawing chart set everything to blank
+        document.getElementById("chartlabel").innerHTML =
+          "Bar chart showing for Job <b>" + origin + "<b>";
+        d3.select("svg").selectAll("*").remove();
 
         // Chart
         d3.select("svg")
@@ -144,7 +275,7 @@
             "translate(" + margin.right + "," + margin.bottom + ")"
           )
           .selectAll("rect")
-          .data(graphdata)
+          .data(toodata)
           .enter()
           .append("rect")
           .attr("x", function (d, i) {
@@ -155,7 +286,11 @@
           })
           .attr("width", xs.bandwidth())
           .attr("height", function (d) {
-            return yheight - ys(d.value);
+            return addfactor + (yheight - ys(d.value));
+          })
+          .attr("fill", function (d, i) {
+            //Not working, color should be same as pie chart
+            return "blue";
           })
           .text((d) => d.value)
           .on("mouseover", (d) => {
@@ -169,18 +304,8 @@
           })
           .on("mouseout", () => tooltip.style("visibility", "hidden"))
           .on("click", (d) => {
-            this.loadPage(d.key);
+            loadPage(d.key);
           });
-
-        // Tool Tip mouse hover
-        var tooltip = d3
-          .select("body")
-          .append("div")
-          .attr("class", "tooltip")
-          .style("position", "absolute")
-          .style("z-index", 10)
-          .style("visibility", "hidden")
-          .text("Simple text");
 
         //y - axis
         d3.select("svg")
@@ -189,7 +314,11 @@
           .append("g")
           .attr(
             "transform",
-            "translate(" + margin.right + "," + margin.bottom + ")"
+            "translate(" +
+              margin.right +
+              "," +
+              (addfactor + margin.bottom) +
+              ")"
           )
           .call(
             d3
@@ -225,7 +354,11 @@
           .append("g")
           .attr(
             "transform",
-            "translate(" + margin.right + "," + (yheight + margin.bottom) + ")"
+            "translate(" +
+              margin.right +
+              "," +
+              (addfactor + yheight + margin.bottom) +
+              ")"
           ) //(50,450)
           .call(d3.axisBottom(xs))
           .selectAll("text")
@@ -235,62 +368,8 @@
           .attr("transform", "rotate(90)")
           .style("text-anchor", "start")
           .style("font", "Arial")
-          .style("font-size", "10px")
+          .style("font-size", "11px")
           .style("font-weight", "bold");
-
-        ///////////////////////////////////////////////////// Bar Chart End ///////////////////////////////////////
-
-        ///////////////////////////////////////////////////// Pie Chart ///////////////////////////////////////////
-        var totaljobs = 2528; //Find total jobs number
-        var piedata = graphdata.map(function (d) {
-          var val = (d.value / totaljobs) * 100;
-          console.log(val);
-          return val;
-        });
-        var color = d3.schemeCategory10;
-        var pie = d3.pie();
-        var arc = d3.arc().innerRadius(0).outerRadius(150);
-        var arcData = pie(piedata);
-        var colorOrd = d3.scaleOrdinal(d3.schemeCategory10);
-
-        function getKey(index) {
-          return graphdata[index].key;
-        }
-
-        d3.select("svg")
-          .attr("width", width)
-          .attr("height", height)
-          .append("g")
-          .attr("transform", "translate(" + 550 + "," + 190 + ")")
-          .selectAll("path")
-          .data(arcData)
-          .enter()
-          .append("path")
-          .attr("d", arc)
-          .attr("fill", function (d, i) {
-            return colorOrd(i);
-          })
-          .text((d) => d.value)
-          .on("mouseover", (d, i) => {
-            tooltip.text(getKey(i) + " : " + d3.format(".1f")(d.value) + " %");
-            return tooltip.style("visibility", "visible");
-          })
-          .on("mousemove", function () {
-            return tooltip
-              .style("top", d3.event.pageY - 10 + "px")
-              .style("left", d3.event.pageX + 10 + "px");
-          })
-          .on("mouseout", () => tooltip.style("visibility", "hidden"));
-
-        //X-scale
-        var xs1 = d3
-          .scaleBand()
-          .domain(
-            graphdata.map(function (d) {
-              return;
-            })
-          )
-          .range([0, xwidth]);
       }
     </script>
   </body>

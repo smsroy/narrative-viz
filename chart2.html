@@ -124,11 +124,10 @@
         // const newElement = [{ key: "Other", value: remjobdata.sum("value") }];
         // jobdata = newElement.concat(jobdata); // added others as the first element
         // console.log(jobdata);
-
         //Sort again
-        jobdata.sort(function (a, b) {
-          return d3.descending(+a.value, +b.value);
-        });
+        // jobdata.sort(function (a, b) {
+        //   return d3.descending(+a.value, +b.value);
+        // });
 
         //Now load data to the select
         var jobtitlelabel = document.createElement("label");

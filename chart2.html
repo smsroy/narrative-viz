@@ -78,6 +78,8 @@
       //Global Variable
       var data; // this one holds csv data
       var chartdata; //this will hold chart data at any point of time
+      var totaljobs;
+      var topjobs = []; // Top job Keys
       var origin;
       var originby = 'Type of Ownership';  //default
       var margin = {
@@ -99,7 +101,14 @@
           total += this[i][prop];
         }
         return total;
-      };
+      }
+
+      // Function to check if key exists in array
+      function keyExists(keyval) {
+        return topjobs.some(function(el) {
+        return el === keyval;
+      }); 
+}      
 
       //Function to Load jobs list
       function loadJobs() {
@@ -115,21 +124,21 @@
           })
           .entries(data);
 
+        totaljobs = seldata.sum("value"); // getting total jobs
+
         seldata.sort(function (a, b) {
           return d3.descending(+a.value, +b.value);
         });
         var jobdata = seldata.slice(0, 20); // Top 20 elements
+        topjobs = jobdata.map(d => {return d.key;}); //Storing top job titles
+        // console.log('topjobs', topjobs);
 
         // Commented section to add other jobs and number
-        // var remjobdata = seldata.slice(20); // remaining 20 elements
+        var remjobdata = seldata.slice(20); // remaining after 20 elements
         // console.log(remjobdata.sum("value"));
-        // const newElement = [{ key: "Other", value: remjobdata.sum("value") }];
-        // jobdata = newElement.concat(jobdata); // added others as the first element
+        const newElement = [{ key: "Others", value: remjobdata.sum("value") }];
+        jobdata = jobdata.concat(newElement); // added others as the first element
         // console.log(jobdata);
-        //Sort again
-        // jobdata.sort(function (a, b) {
-        //   return d3.descending(+a.value, +b.value);
-        // });
 
         //Now load data to the select
         // ***** adding jobs select ******
@@ -150,13 +159,13 @@
         //add one first option - All
         var jobtitleoption = document.createElement("option");
         jobtitleoption.value = "All";
-        jobtitleoption.text = "All";
+        jobtitleoption.text = "All : " + totaljobs;
         selectjobtitle.appendChild(jobtitleoption);
 
         for (const val of jobdata) {
           jobtitleoption = document.createElement("option");
           jobtitleoption.value = val.key;
-          jobtitleoption.text = val.key + ":" + val.value;
+          jobtitleoption.text = val.key + " : " + val.value;
           if (val.key == origin) jobtitleoption.selected = true;
           selectjobtitle.appendChild(jobtitleoption);
         }
@@ -236,14 +245,18 @@
       function initializeChartData() {
         var keyval;
         //Form data per origin by
-        if (originby == 'Type of Ownership') {
+        if (originby === 'Type of Ownership') {
           chartdata = d3
           .nest()
           .key(function (d) {
-            if (d.TypeOfOwnership == "") keyval = "Other";
+            if (d.TypeOfOwnership == "") keyval = "Unknown";
             else if (d.TypeOfOwnership == "-1") keyval = "Unknown";
             else keyval = d.TypeOfOwnership;
             if (origin == "All") return keyval;
+            else if (origin == "Others") {
+              if (keyExists(d.JobTitle)) return "Filter";
+              else return keyval;
+            }           
             else if (d.JobTitle == origin) return keyval;
             else return "Filter";
           })
@@ -254,14 +267,18 @@
           })
           .entries(data);
         } 
-        else if (originby == 'Industry') {
+        else if (originby === 'Industry') {
           chartdata = d3
           .nest()
           .key(function (d) {
-            if (d.Industry == "") keyval = "Other";
+            if (d.Industry == "") keyval = "Unknown";
             else if (d.Industry == "-1") keyval = "Unknown";
             else keyval = d.Industry;
             if (origin == "All") return keyval;
+            else if (origin == "Others") {
+              if (keyExists(d.JobTitle)) return "Filter";
+              else return keyval;
+            }             
             else if (d.JobTitle == origin) return keyval;
             else return "Filter";
           })
@@ -272,14 +289,18 @@
           })
           .entries(data);
         } 
-        else if (originby == 'Sector') {
+        else if (originby === 'Sector') {
           chartdata = d3
           .nest()
           .key(function (d) {
-            if (d.Sector == "") keyval = "Other";
+            if (d.Sector == "") keyval = "Unknown";
             else if (d.Sector == "-1") keyval = "Unknown";
             else keyval = d.Sector;
             if (origin == "All") return keyval;
+            else if (origin == "Others") {
+              if (keyExists(d.JobTitle)) return "Filter";
+              else return keyval;
+            }               
             else if (d.JobTitle == origin) return keyval;
             else return "Filter";
           })
@@ -294,6 +315,8 @@
 
       //Function to draw chart
       function showChart() {
+        var data2 = [];
+        var toodata;
         chartdata.sort(function (a, b) {
           return d3.descending(+a.value, +b.value);
         });
@@ -302,8 +325,13 @@
         var data2 = chartdata.filter((x) => {
           return x.key != "Filter";
         });
-        var toodata = data2.slice(0, 20); // Top 20 elements
-        // console.log(toodata);
+
+        if(origin == 'Others') {
+          toodata = data2;
+        } else {
+          toodata = data2.slice(0, 20); // Top 20 elements
+        }
+        // console.log('toodata', toodata);     
 
         //X-scale
         var xs = d3

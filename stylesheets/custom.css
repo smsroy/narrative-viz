@@ -2,7 +2,6 @@ body {
   background: white;
 }
 rect {
-  fill: #01623f;
   stroke-width: 1px;
   opacity: 0.7;
   stroke: white;

@@ -133,7 +133,7 @@
           ])
           .range([yheight, 0]);
 
-        var colorrn = d3.scaleOrdinal(d3.schemeCategory10); //Not working, color should be same as pie chart
+        var colorrn = d3.scaleOrdinal(d3.schemeCategory10); //Not working properly, color should be same as pie chart
 
         // Tool Tip mouse hover
         var tooltip = d3
@@ -168,9 +168,8 @@
           .attr("height", function (d) {
             return addfactor + (yheight - ys(d.value));
           })
-          .attr("fill", function (d, i) {
-            //Not working, color should be same as pie chart
-            return "blue";
+          .attr("fill", function (d) {
+            return colorrn(d.value);
           })
           .text((d) => d.value)
           .on("mouseover", (d) => {

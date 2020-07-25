@@ -82,7 +82,7 @@
         var height = 500;
         var xwidth = width / 2 - 2 * margin.right - 2 * margin.left;
         var yheight = height - 2 * margin.top - 2 * margin.bottom;
-
+        const addfactor = 10;
         const data = await d3.csv("data/DataEngineer1.csv");
 
         function loadPage(id) {
@@ -166,7 +166,7 @@
           })
           .attr("width", xs.bandwidth())
           .attr("height", function (d) {
-            return yheight - ys(d.value);
+            return addfactor + (yheight - ys(d.value));
           })
           .attr("fill", function (d, i) {
             //Not working, color should be same as pie chart
@@ -194,7 +194,11 @@
           .append("g")
           .attr(
             "transform",
-            "translate(" + margin.right + "," + margin.bottom + ")"
+            "translate(" +
+              margin.right +
+              "," +
+              (addfactor + margin.bottom) +
+              ")"
           )
           .call(
             d3
@@ -230,7 +234,11 @@
           .append("g")
           .attr(
             "transform",
-            "translate(" + margin.right + "," + (yheight + margin.bottom) + ")"
+            "translate(" +
+              margin.right +
+              "," +
+              (addfactor + yheight + margin.bottom) +
+              ")"
           ) //(50,450)
           .call(d3.axisBottom(xs))
           .selectAll("text")

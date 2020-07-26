@@ -29,3 +29,9 @@ rect:hover {
 path {
   stroke: white;
 }
+
+/* Style the active class, and buttons on mouse-over */
+.active {
+  background-color: #666;
+  color: white;
+}

@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <title>Narrative-viz by smsroy</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
     <link
       rel="stylesheet"
       type="text/css"
@@ -40,7 +41,43 @@
     <section class="page-header1">
       <h1 class="project-name">Jobs Visualization</h1>
     </section>
-
+    <div class="w3-bar w3-teal">
+      <a
+        href="#"
+        onclick="navigate('previous');"
+        class="w3-bar-item w3-button"
+        style="width: 27%;"
+        ><<</a
+      >
+      <a
+        href="#"
+        onclick="navigate('summary');"
+        class="w3-bar-item w3-button"
+        style="width: 15%;"
+        >Summary</a
+      >
+      <a
+        href="#"
+        onclick="navigate('jobsby');"
+        class="w3-bar-item w3-button w3-green"
+        style="width: 15%;"
+        >Jobs By</a
+      >
+      <a
+        href="#"
+        onclick="navigate('jobsdetail');"
+        class="w3-bar-item w3-button"
+        style="width: 15%;"
+        >Jobs Details</a
+      >
+      <a
+        href="#"
+        onclick="navigate('next');"
+        class="w3-bar-item w3-button"
+        style="width: 28%;"
+        >>></a
+      >
+    </div>
     <section class="main-content">
       <h3>
         <span aria-hidden="true" class="octicon octicon-link"></span>Jobs
@@ -93,6 +130,28 @@
       var xwidth = width - 2 * margin.right - 2 * margin.left;
       var yheight = height - 2 * margin.top - 2 * margin.bottom;
       const addfactor = 10;
+
+      var currentPage = "chart2.html";
+      var nextPage = "chart3.html";
+      var previousPage = "chart1.html";
+      var summaryPage = "chart1.html";
+      var jobsbyPage = "chart2.html";
+      var jobsdetailPage = "chart3.html";
+
+      function navigate(action) {
+        if (action == "next") {
+          dest = nextPage;
+        } else if (action == "previous") {
+          dest = previousPage;
+        } else if (action == "summary") {
+          dest = summaryPage;
+        } else if (action == "jobsby") {
+          dest = jobsbyPage;
+        } else if (action == "jobsdetail") {
+          dest = jobsdetailPage;
+        } else dest = "#";
+        window.location = dest;
+      }      
 
       //Function to do array value sum
       Array.prototype.sum = function (prop) {

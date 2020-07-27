@@ -118,7 +118,7 @@
       var totaljobs;
       var topjobs = []; // Top job Keys
       var origin;
-      var originby = 'Type of Ownership';  //default
+      var originby = 'Industry';  //default
       var margin = {
         top: 50,
         right: 50,
@@ -251,11 +251,7 @@
           initializeChartData();
           showChart();
         });
-
-        var byoption = document.createElement("option");
-        byoption.value = 'Type of Ownership';
-        byoption.text = 'Type of Ownership';
-        selectby.appendChild(byoption); 
+ 
         byoption = document.createElement("option");
         byoption.value = 'Industry';
         byoption.text = 'Industry';
@@ -264,6 +260,14 @@
         byoption.value = 'Sector';
         byoption.text = 'Sector';
         selectby.appendChild(byoption); 
+        var byoption = document.createElement("option");
+        byoption.value = 'Type of Ownership';
+        byoption.text = 'Type of Ownership';
+        selectby.appendChild(byoption);        
+        byoption = document.createElement("option");
+        byoption.value = 'Company Revenue';
+        byoption.text = 'Company Revenue';
+        selectby.appendChild(byoption);        
         
         //First remove all elements and then add
         document.getElementById("bydiv").innerHTML = null;
@@ -370,6 +374,29 @@
           })
           .entries(data);
         }
+        else if (originby === 'Company Revenue') {
+          chartdata = d3
+          .nest()
+          .key(function (d) {
+            if (d.Revenue == "") keyval = "Unknown";
+            else if (d.Revenue == "-1") keyval = "Unknown";
+            else if (d.Revenue == "Unknown / Non-Applicable") keyval = "Unknown";
+            else keyval = d.Revenue;
+            if (origin == "All") return keyval;
+            else if (origin == "Others") {
+              if (keyExists(d.JobTitle)) return "Filter";
+              else return keyval;
+            }               
+            else if (d.JobTitle == origin) return keyval;
+            else return "Filter";
+          })
+          .rollup(function (d) {
+            return d3.sum(d, function (g) {
+              return 1;
+            });
+          })
+          .entries(data);
+        }        
       }      
 
       //Function to draw chart

@@ -217,8 +217,8 @@
 
         //add one first option - All
         var jobtitleoption = document.createElement("option");
-        jobtitleoption.value = "All";
-        jobtitleoption.text = "All : " + totaljobs;
+        jobtitleoption.value = "All Jobs";
+        jobtitleoption.text = "All Jobs : " + totaljobs;
         selectjobtitle.appendChild(jobtitleoption);
 
         for (const val of jobdata) {
@@ -291,7 +291,7 @@
           urlParams.get("origin") == undefined ||
           urlParams.get("origin") == null ||
           urlParams.get("origin") == ""
-            ? "All"
+            ? "All Jobs"
             : urlParams.get("origin");
         // console.log(origin);
 
@@ -315,7 +315,7 @@
             if (d.TypeOfOwnership == "") keyval = "Unknown";
             else if (d.TypeOfOwnership == "-1") keyval = "Unknown";
             else keyval = d.TypeOfOwnership;
-            if (origin == "All") return keyval;
+            if (origin == "All Jobs") return keyval;
             else if (origin == "Others") {
               if (keyExists(d.JobTitle)) return "Filter";
               else return keyval;
@@ -337,7 +337,7 @@
             if (d.Industry == "") keyval = "Unknown";
             else if (d.Industry == "-1") keyval = "Unknown";
             else keyval = d.Industry;
-            if (origin == "All") return keyval;
+            if (origin == "All Jobs") return keyval;
             else if (origin == "Others") {
               if (keyExists(d.JobTitle)) return "Filter";
               else return keyval;
@@ -359,7 +359,7 @@
             if (d.Sector == "") keyval = "Unknown";
             else if (d.Sector == "-1") keyval = "Unknown";
             else keyval = d.Sector;
-            if (origin == "All") return keyval;
+            if (origin == "All Jobs") return keyval;
             else if (origin == "Others") {
               if (keyExists(d.JobTitle)) return "Filter";
               else return keyval;
@@ -382,7 +382,7 @@
             else if (d.Revenue == "-1") keyval = "Unknown";
             else if (d.Revenue == "Unknown / Non-Applicable") keyval = "Unknown";
             else keyval = d.Revenue;
-            if (origin == "All") return keyval;
+            if (origin == "All Jobs") return keyval;
             else if (origin == "Others") {
               if (keyExists(d.JobTitle)) return "Filter";
               else return keyval;

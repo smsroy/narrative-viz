@@ -83,10 +83,14 @@
         <span aria-hidden="true" class="octicon octicon-link"></span>Jobs
         Summary
       </h3>
-      <p>
-        Below is the summary representation of the Glassdoor Data Engineers job
-        dataset. The analysis may help in finding job as a Data Engineer.
-      </p>
+      <div class="vistext">
+        Below is the summary representation of the Glassdoor job dataset. The
+        analysis shows the most number of jobs available by title. <br />
+        <b>Left Figure</b> shows bar chart of <b>Job Title</b> by
+        <b>Number of Jobs</b> available.<br />
+        <b>Right Figure</b> shows the same data <b>Job Title</b> by
+        <b>Number of Jobs</b> in percentages on a pie chart.
+      </div>
 
       <div>
         <svg width="600" height="600"></svg>
@@ -370,7 +374,7 @@
         // Arc defined just for label below
         var labelArc = d3
           .arc()
-          .innerRadius(radius + 5)
+          .innerRadius(radius + 14)
           .outerRadius(radius + 40);
 
         //Printing labels
@@ -379,7 +383,9 @@
             return "translate(" + labelArc.centroid(d) + ")";
           })
           .text(function (d, i) {
-            return Math.round(d.value, 0) < 2 ? "" : d3.format(".1f")(d.value);
+            return Math.round(d.value, 0) < 2
+              ? ""
+              : d3.format(".1f")(d.value) + " %";
           })
           .style("fill", "#1f77b4")
           .style("font", "Arial")

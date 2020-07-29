@@ -278,7 +278,7 @@
       }
 
       function loadPage(id) {
-        dest = "chart2.html" + "?origin=" + id;
+        dest = "chart3.html" + "?origin=" + origin + "&originby=" + originby + "&originbyval=" + id;
         //console.log(dest);
         window.location = dest;
       }
@@ -295,7 +295,7 @@
             : urlParams.get("origin");
         // console.log(origin);
 
-        data = await d3.csv("data/DataEngineer1.csv");
+        data = await d3.csv("data/DataEngineer2.csv");
 
         //Load Job select
         loadJobs();

@@ -30,6 +30,7 @@ d3.csv("data/data.csv").then(d => chart(d))
 function chart(csv) {
 
 	var keys = csv.columns.slice(2);
+	console.log('keys', keys);
 
 	var year   = [...new Set(csv.map(d => d.Year))]
 	var states = [...new Set(csv.map(d => d.State))]

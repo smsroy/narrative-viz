@@ -28,7 +28,7 @@ Toggle sort
 d3.csv("data/data.csv").then(d => chart(d))
 
 function chart(csv) {
-
+	console.log('csv', csv);
 	var keys = csv.columns.slice(2);
 	console.log('keys', keys);
 

@@ -34,8 +34,8 @@ async function init() {
 
 function chart(csv) {
 	console.log('csv1', csv);
-// 	var keys = csv.columns.slice(2);
-	var keys = ["Under 5 Years", "5 to 13 Years", "14 to 17 Years"];
+	var keys = csv.columns.slice(2);
+// 	var keys = ["Under 5 Years", "5 to 13 Years", "14 to 17 Years"];
 	console.log('keys1', keys);
 
 	var year   = [...new Set(csv.map(d => d.Year))]

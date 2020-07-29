@@ -13,7 +13,7 @@ body {
 </style>
 </head>
 
-<body>
+<body onload="init()">
 
 <svg id="chart" width="650" height="400"></svg>
 
@@ -25,11 +25,13 @@ Toggle sort
 
 <script>
 
-//d3.csv("data/data.csv").then(d => chart(d))
-var data = d3.csv("data/data.csv");
-data.map(function (obj) {
-	chart(obj);
-});
+async function init() {
+	//d3.csv("data/data.csv").then(d => chart(d))
+	var data = await d3.csv("data/data.csv");
+	data.map(function (obj) {
+		chart(obj);
+	});
+}
 
 
 function chart(csv) {

@@ -26,16 +26,16 @@ Toggle sort
 <script>
 
 //d3.csv("data/data.csv").then(d => chart(d))
-var data = await d3.csv("data/data.csv");
+var data = d3.csv("data/data.csv");
 data.map(function (obj) {
 	chart(obj);
 });
 
 
 function chart(csv) {
-	console.log('csv', csv);
+	console.log('csv1', csv);
 	var keys = csv.columns.slice(2);
-	console.log('keys', keys);
+	console.log('keys1', keys);
 
 	var year   = [...new Set(csv.map(d => d.Year))]
 	var states = [...new Set(csv.map(d => d.State))]

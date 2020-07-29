@@ -25,7 +25,12 @@ Toggle sort
 
 <script>
 
-d3.csv("data/data.csv").then(d => chart(d))
+//d3.csv("data/data.csv").then(d => chart(d))
+var data = await d3.csv("data/data.csv");
+data.map(function (obj) {
+	chart(obj);
+});
+
 
 function chart(csv) {
 	console.log('csv', csv);

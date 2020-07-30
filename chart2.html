@@ -278,7 +278,11 @@
       }
 
       function loadPage(id) {
-        dest = "chart3.html" + "?origin=" + origin + "&originby=" + originby + "&originbyval=" + id;
+        //replace space and & character for url 
+        var originwsa = origin.replace(' & ','~').replace(' ', '^');
+        var originbywsa = originby.replace(' & ','~').replace(' ', '^');
+        var originbyvalwsa = id.replace(' & ','~').replace(' ', '^');
+        dest = "chart3.html" + "?origin=" + originwsa + "&originby=" + originbywsa + "&originbyval=" + originbyvalwsa;
         //console.log(dest);
         window.location = dest;
       }

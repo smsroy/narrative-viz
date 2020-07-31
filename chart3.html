@@ -83,21 +83,19 @@
         <span aria-hidden="true" class="octicon octicon-link"></span>Jobs Details
         by Company, Salary Estimate, Rating, Location
       </h3>
-      </p>
-      <div id="selectchoice">
-        <div id="selectdiv"></div>
-        <div id="bydiv"></div>
-      </div>
       <div>
         <div></br></div>
         <div> 
           <label id="chartlabel" for="chartlabel"></label>
         </div>
-        <svg id="chart" width="600" height="600"></svg>
-        <br>
-        <select id="year"></select>        
-        <input type="checkbox" id="sort">	
-        Toggle sort         
+        <div id="pagination">
+          <input type="button" id="first" onclick="firstPage()" value="first" />
+          <input type="button" id="next" onclick="nextPage()" value="next" />
+          <input type="button" id="previous" onclick="previousPage()" value="previous" />
+          <input type="button" id="last" onclick="lastPage()" value="last" />
+          <label id="paginationlabel" for="paginationlabel"></label>
+        </div>        
+        <svg id="chart" width="960" height="500"></svg>        
       </div>
 
       <footer class="site-footer">
@@ -117,7 +115,7 @@
 
     <script>
       //Global Variable
-      var data; // this one holds csv data
+      var filedata; // this one holds csv data
       var filteredData = []; // holds filtered data per parameters
       var chartdata = []; //this will hold chart data at any point of time
       var totaljobs;
@@ -125,133 +123,124 @@
       var origin;
       var originby = 'Company Name';  //default
       var originByVal;
-      var margin = {
-        top: 50,
-        right: 50,
-        bottom: 50,
-        left: 50,
-      };
-      var width = 650;
-      var height = 400;
-      var xwidth = width - 2 * margin.right - 2 * margin.left;
-      var yheight = height - 2 * margin.top - 2 * margin.bottom;
-      const addfactor = 10;
 
-      var currentPage = "chart3.html";
-      var nextPage = "chart3.html";
-      var previousPage = "chart2.html";
-      var summaryPage = "chart1.html";
-      var jobsbyPage = "chart2.html";
-      var jobsdetailPage = "chart3.html";
+      // Scene navigation logic
+      var currentPage1 = "chart3.html";
+      var nextPage1 = "chart3.html";
+      var previousPage1 = "chart2.html";
+      var summaryPage1 = "chart1.html";
+      var jobsbyPage1 = "chart2.html";
+      var jobsdetailPage1= "chart3.html";
 
       function navigate(action) {
         if (action == "next") {
-          dest = nextPage;
+          dest = nextPage1;
         } else if (action == "previous") {
-          dest = previousPage;
+          dest = previousPage1;
         } else if (action == "summary") {
-          dest = summaryPage;
+          dest = summaryPage1;
         } else if (action == "jobsby") {
-          dest = jobsbyPage;
+          dest = jobsbyPage1;
         } else if (action == "jobsdetail") {
-          dest = jobsdetailPage;
+          dest = jobsdetailPage1;
         } else dest = "#";
         window.location = dest;
+      }
+
+      // global JavaScript variables
+      var list = [];
+      var pageList = [];
+      var currentPage = 1;
+      var numberPerPage = 8;
+      var numberOfPages = 1;   // calculates the total number of pages      
+
+      function nextPage() {
+        currentPage += 1;
+        d3.select("svg").selectAll("*").remove(); 
+        setTimeout(function(){ loadList(); }, 500);
+      }
+
+      function previousPage() {
+        currentPage -= 1;
+        d3.select("svg").selectAll("*").remove(); 
+        setTimeout(function(){ loadList(); }, 500);
+      }
+
+      function firstPage() {
+        currentPage = 1;
+        d3.select("svg").selectAll("*").remove(); 
+        setTimeout(function(){ loadList(); }, 500);
+      }
+
+      function lastPage() {
+        currentPage = numberOfPages;
+        d3.select("svg").selectAll("*").remove(); 
+        setTimeout(function(){ loadList(); }, 500);
+      }
+
+      function getNumberOfPages() {
+        return Math.ceil(list.length / numberPerPage);
       }      
 
-      //Function to do array value sum
-      Array.prototype.sum = function (prop) {
-        var total = 0;
-        for (var i = 0, _len = this.length; i < _len; i++) {
-          total += this[i][prop];
-        }
-        return total;
-      }
+      function loadList() {
+        numberOfPages = getNumberOfPages();
+        var begin = ((currentPage - 1) * numberPerPage);
+        var end = begin + numberPerPage;
 
-      // Function to check if key exists in array
-      function keyExists(keyval) {
-        return topjobs.some(function(el) {
-        return el === keyval;
-      }); 
-}      
+        pageList = list.slice(begin, end);
+        chart(pageList); // draws out our data
+        check();         // determines the states of the pagination buttons
 
-      //Function to Load jobs list
-      function loadJobs() {
-        var seldata = d3
-          .nest()
-          .key(function (d) {
-            return d.JobTitle == "" ? "None" : d.JobTitle;
-          })
-          .rollup(function (d) {
-            return d3.sum(d, function (g) {
-              return 1;
-            });
-          })
-          .entries(data);
+        //set page number
+        document.getElementById("paginationlabel").innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + 
+        "Total Companies: <b>" + list.length + "</b>" + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + 
+          "Current Page: <b>" + currentPage + "</b>" + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + "Total Pages:<b>" + numberOfPages + "</b>";    
+      } 
+      
+      function check() {
+        document.getElementById("next").disabled = currentPage == numberOfPages ? true : false;
+        document.getElementById("previous").disabled = currentPage == 1 ? true : false;
+        document.getElementById("first").disabled = currentPage == 1 ? true : false;
+        document.getElementById("last").disabled = currentPage == numberOfPages ? true : false;
+      }      
 
-        totaljobs = seldata.sum("value"); // getting total jobs
+      // All chart variables
+      var svg = d3.select("svg"),
+        margin = {top: 20, right: 20, bottom: 30, left: 40},
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        seldata.sort(function (a, b) {
-          return d3.descending(+a.value, +b.value);
-        });
-        var jobdata = seldata.slice(0, 20); // Top 20 elements
-        topjobs = jobdata.map(d => {return d.key;}); //Storing top job titles
-        // console.log('topjobs', topjobs);
+      // The scale spacing the groups:
+      var x0 = d3.scaleBand()
+          .rangeRound([0, width])
+          .paddingInner(0.1);
 
-        // Commented section to add other jobs and number
-        var remjobdata = seldata.slice(20); // remaining after 20 elements
-        // console.log(remjobdata.sum("value"));
-        const newElement = [{ key: "Others", value: remjobdata.sum("value") }];
-        jobdata = jobdata.concat(newElement); // added others as the first element
-        // console.log(jobdata);
+      // The scale for spacing each group's bar:
+      var x1 = d3.scaleBand()
+          .padding(0.05);
 
-        //Now load data to the select
-        // ***** adding jobs select ******
-        var jobtitlelabel = document.createElement("label");
-        jobtitlelabel.innerHTML =
-          "Select Job : ";
-        jobtitlelabel.htmlFor = "jobs";
+      var y = d3.scaleLinear()
+        .rangeRound([height, 0]);   
+        
+      var z = d3.scaleOrdinal()
+        //.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);        
+        .range(["steelblue", "darkorange", "green", "red", "purple", "brown", "pink"]);
 
-        var selectjobtitle = document.createElement("select");
-        selectjobtitle.name = "jobtitle";
-        selectjobtitle.id = "jobtitle";
-        selectjobtitle.addEventListener("change", function (event) {
-          origin = document.getElementById("jobtitle").value;
-          initializeChartData();
-          showChart();
-        });
-
-        //add one first option - All
-        var jobtitleoption = document.createElement("option");
-        jobtitleoption.value = "All Jobs";
-        jobtitleoption.text = "All Jobs : " + totaljobs;
-        selectjobtitle.appendChild(jobtitleoption);
-
-        for (const val of jobdata) {
-          jobtitleoption = document.createElement("option");
-          jobtitleoption.value = val.key;
-          jobtitleoption.text = val.key + " : " + val.value;
-          if (val.key == origin) jobtitleoption.selected = true;
-          selectjobtitle.appendChild(jobtitleoption);
-        }
-
-        //First remove all elements and then add
-        document.getElementById("selectdiv").innerHTML = null;
-        document
-          .getElementById("selectdiv")
-          .appendChild(jobtitlelabel)
-          .appendChild(selectjobtitle);
-      }
-
-      //Not required
-      // function loadPage(id) {
-      //   dest = "chart3.html" + "?origin=" + id;
-      //   //console.log(dest);
-      //   window.location = dest;
-      // }
+      // Tool Tip mouse hover
+      var tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("z-index", 10)
+        .style("visibility", "hidden")
+        .text("Simple text");
 
       //Function called on body onload
       async function init() {
+        filedata = await d3.csv("data/DataEngineer2.csv");
+
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         origin =
@@ -264,26 +253,22 @@
           urlParams.get("originby") == undefined ||
           urlParams.get("originby") == null ||
           urlParams.get("originby") == ""
-            ? "Company Name"
+            ? "Industry"
             : urlParams.get("originby").replace('^', ' ').replace('~',' & ');
         originbyval =
           urlParams.get("originbyval") == undefined ||
           urlParams.get("originbyval") == null ||
           urlParams.get("originbyval") == ""
-            ? "any"
+            ? ""
             : urlParams.get("originbyval").replace('^', ' ').replace('~',' & ');            
-        console.log('origin', origin);
-        console.log('originby', originby);
-        console.log('originbyval', originbyval);
+        // console.log('origin', origin);
+        // console.log('originby', originby);
+        // console.log('originbyval', originbyval);
 
-        data = await d3.csv("data/DataEngineer2.csv");
-
-        //Load Job select
-        loadJobs();
-        initializeChartData();
-        //Show chart
-        showChart();
+        initializeChartData(); //initializes list with data for the next loadList call
+        loadList();
       }
+
 
       //Function to form chart data depending on selection
       function initializeChartData() {
@@ -292,50 +277,50 @@
         // first filter data by origin type
         if (originby === 'Type of Ownership') {
           if (originbyval === '') {
-            filteredData = data.filter(function(d){return d;});
+            filteredData = filedata.filter(function(d){return d;});
           } else if (originbyval === 'Unknown') {
-            filteredData = data.filter(function(d){
+            filteredData = filedata.filter(function(d){
               if ((d.TypeOfOwnership == '-1') || (d.TypeOfOwnership.toLowerCase().indexOf('unknown') !== -1)) 
               return d ;
             });
           } else {
-            filteredData = data.filter(function(d){return d.TypeOfOwnership == originbyval;});
+            filteredData = filedata.filter(function(d){return d.TypeOfOwnership == originbyval;});
           }
         } 
         else if (originby === 'Industry') {
           if (originbyval === '') {
-            filteredData = data.filter(function(d){return d;});
+            filteredData = filedata.filter(function(d){return d;});
           } else if (originbyval === 'Unknown') {
-            filteredData = data.filter(function(d){
+            filteredData = filedata.filter(function(d){
               if ((d.Industry == '-1') || (d.Industry.toLowerCase().indexOf('unknown') !== -1)) 
               return d ;
             });
           } else {
-            filteredData = data.filter(function(d){return d.Industry == originbyval;});
+            filteredData = filedata.filter(function(d){return d.Industry == originbyval;});
           }
         }
         else if (originby === 'Sector') {
           if (originbyval === '') {
-            filteredData = data.filter(function(d){return d;});
+            filteredData = filedata.filter(function(d){return d;});
           } else if (originbyval === 'Unknown') {
-            filteredData = data.filter(function(d){
+            filteredData = filedata.filter(function(d){
               if ((d.Sector == '-1') || (d.Sector.toLowerCase().indexOf('unknown') !== -1)) 
               return d ;
             });
           } else {
-            filteredData = data.filter(function(d){return d.Sector == originbyval;});
+            filteredData = filedata.filter(function(d){return d.Sector == originbyval;});
           }
         }
         else if (originby === 'Company Revenue') {
           if (originbyval === '') {
-            filteredData = data.filter(function(d){return d;});
+            filteredData = filedata.filter(function(d){return d;});
           } else if (originbyval === 'Unknown') {
-            filteredData = data.filter(function(d){
+            filteredData = filedata.filter(function(d){
               if ((d.Revenue == '-1') || (d.Revenue.toLowerCase().indexOf('unknown') !== -1)) 
               return d ;
             });
           } else {
-            filteredData = data.filter(function(d){return d.Revenue == originbyval;});
+            filteredData = filedata.filter(function(d){return d.Revenue == originbyval;});
           }
         } 
         //console.log('filteredData', filteredData);
@@ -349,211 +334,116 @@
           else if (d["CompanyName"] === "-1") keyval = "NA";
           else keyval = d["CompanyName"].split('\n')[0]; //Removing linefeed and numbers at the end of company name
           return keyval;
-
-          // if (origin === "All Jobs") return keyval;
-          // else if (origin === "Others") {
-          //   if (keyExists(d.JobTitle)) return "Filter";
-          //   else return keyval;
-          // }           
-          // else if (d.JobTitle === origin) return keyval;
-          // else return "Filter";
         })      
         .rollup(function (d) {
           return {
-            passedjobcount: d3.sum(d, function (g) {
-              if (origin === "All Jobs") return 1;
-              else if ((origin !== "All Jobs") && (g.JobTitle == origin)) return 1;
-              else if ((origin !== "All Jobs") && (g.JobTitle !== origin)) return 0;
+            data_engineer: d3.sum(d, function (g) {
+              if (g.JobTitle.toLowerCase() == 'data engineer') return 1;
+              else return 0;
             }),
-            otherjobcount: d3.sum(d, function (g) {
-              if (origin === "All Jobs") return 0;
-              if ((origin !== "All Jobs") && (g.JobTitle != origin)) return 1;
-              else if ((origin !== "All Jobs") && (g.JobTitle == origin))return 0;
+            senior_data_engineer: d3.sum(d, function (g) {
+              if (g.JobTitle.toLowerCase() == 'senior data engineer') return 1;
+              else return 0;
+            }),
+            software_engineer: d3.sum(d, function (g) {
+              if (g.JobTitle.toLowerCase() == 'software engineer') return 1;
+              else return 0;
+            }),
+            bigdata_engineer: d3.sum(d, function (g) {
+              if (g.JobTitle.toLowerCase() == 'big data engineer') return 1;
+              else return 0;
+            }),
+            sr_data_engineer: d3.sum(d, function (g) {
+              if (g.JobTitle.toLowerCase() == 'sr. data engineer') return 1;
+              else return 0;
+            }),
+            others: d3.sum(d, function (g) {
+              if ((g.JobTitle.toLowerCase() != 'data engineer') &&
+              (g.JobTitle.toLowerCase() != 'senior data engineer') &&
+              (g.JobTitle.toLowerCase() != 'software engineer') &&
+              (g.JobTitle.toLowerCase() != 'big data engineer') &&
+              (g.JobTitle.toLowerCase() != 'sr. data engineer')) {
+                return 1;
+              }
+              else return 0;
             }),
             totaljobcount: d3.sum(d, function (g) {
                 return 1;
             })
           }
-
-          // return {
-          //   data_engineer: d3.sum(d, function (g) {
-          //     if (g.JobTitle.toLowerCase() == 'data engineer') return 1;
-          //     else return 0;
-          //   }),
-          //   senior_data_engineer: d3.sum(d, function (g) {
-          //     if (g.JobTitle.toLowerCase() == 'senior data engineer') return 1;
-          //     else return 0;
-          //   }),
-          //   software_engineer: d3.sum(d, function (g) {
-          //     if (g.JobTitle.toLowerCase() == 'software engineer') return 1;
-          //     else return 0;
-          //   }),
-          //   bigdata_engineer: d3.sum(d, function (g) {
-          //     if (g.JobTitle.toLowerCase() == 'big data engineer') return 1;
-          //     else return 0;
-          //   }),
-          //   others: d3.sum(d, function (g) {
-          //     if ((g.JobTitle.toLowerCase() != 'data engineer') &&
-          //     (g.JobTitle.toLowerCase() != 'senior data engineer') &&
-          //     (g.JobTitle.toLowerCase() != 'software engineer') &&
-          //     (g.JobTitle.toLowerCase() != 'big data engineer')) {
-          //       return 1;
-          //     }
-          //     else return 0;
-          //   }),
-          //   totalcount: d3.sum(d, function (g) {
-          //       return 1;
-          //   })
-          // }
         })
         .entries(filteredData);
 
-        //Removing "Filter" record - as it is for other than the passed origin
-        // interimData1 = interimData.filter((x) => {
-        //   return x.key != "Filter";
-        // });
-
-        // interimData2 = interimData1.slice().sort((a, b) => d3.descending(a.value.totaljobcount, b.value.totaljobcount));
-        
-        if (origin === "All Jobs") {
-          interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.totaljobcount, b.value.totaljobcount));
-        } else if (origin === "Others") {
-          interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.totaljobcount, b.value.totaljobcount));
-        } else {
-          interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.passedjobcount, b.value.passedjobcount));  
-        }
+        interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.totaljobcount, b.value.totaljobcount));
 
         var i = 0;   
         interimData2 = interimData1.map(function (obj) {
           return {
-            byval : originbyval,
             key: obj.key,
-            passedjobcount: obj.value.passedjobcount,
-            otherjobcount: obj.value.otherjobcount,
+            data_engineer: obj.value.data_engineer,
+            senior_data_engineer: obj.value.senior_data_engineer,
+            software_engineer: obj.value.software_engineer ,
+            bigdata_engineer: obj.value.bigdata_engineer,
+            sr_data_engineer: obj.value.sr_data_engineer,
+            others: obj.value.others,
             totaljobcount: obj.value.totaljobcount
           }
         });
-        console.log('Sorted Data', interimData2);
-        chartdata = [...interimData2];
-        
-        // interimData3 = interimData2.map(function (obj) {
-        //   return {
-        //     byval : originbyval,
-        //     key: obj.key,
-        //     data_engineer: obj.value.data_engineer,
-        //     senior_data_engineer: obj.value.senior_data_engineer,
-        //     software_engineer: obj.value.software_engineer ,
-        //     bigdata_engineer: obj.value.bigdata_engineer,
-        //     others: obj.value.others,
-        //     totalcount: obj.value.totalcount
-        //   }
-        // });
-        // console.log('chartdata sorted', interimData3);
-        // chartdata = [...interimData3];
-      }
-      //Function to draw chart
-      function showChart() {
-        // console.log('chartdata', chartdata);
-        chart(chartdata);            
-      }
+        // console.log('Sorted Data', interimData2);
+        list = [...interimData2];
+      }      
 
-      function chart(csv) {
+      //Drawing the chart
+      function chart(data) {
+        //data = data.slice(0, 8);
+        console.log('Page Data', data);
 
-        // Tool Tip mouse hover
-        var tooltip = d3
-          .select("body")
-          .append("div")
-          .attr("class", "tooltip")
-          .style("position", "absolute")
-          .style("z-index", 10)
-          .style("visibility", "hidden")
-          .text("Simple text");
+        svg = d3.select("svg"),
+        margin = {top: 20, right: 20, bottom: 30, left: 40},
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");        
 
-        csv = csv.slice(0, 2);
-        console.log('csv1', csv);
-        //var keys = csv.columns.slice(2);
-        //var keys = ["data_engineer", "senior_data_engineer", "others"];
-        var keys = ["passedjobcount", "otherjobcount"];
-        console.log('keys1', keys);
+        x0 = d3.scaleBand()
+          .rangeRound([0, width])
+          .paddingInner(0.1);
 
-        var year   = [...new Set(csv.map(d => d.byval))]
-        var states = [...new Set(csv.map(d => d.key))]
+        // The scale for spacing each group's bar:
+        x1 = d3.scaleBand()
+          .padding(0.05);
 
-        var options = d3.select("#year").selectAll("option")
-          .data(year)
-        .enter().append("option")
-          .text(d => d)
+        y = d3.scaleLinear()
+        .rangeRound([height, 0]);   
 
-        var svg = d3.select("#chart"),
-          margin = {top: 35, left: 35, bottom: 0, right: 0},
-          width = +svg.attr("width") - margin.left - margin.right,
-          height = +svg.attr("height") - margin.top - margin.bottom;
+        z = d3.scaleOrdinal()
+        //.range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);        
+        .range(["steelblue", "darkorange", "green", "red", "purple", "brown", "pink"]);        
 
-        var x = d3.scaleBand()
-          .range([margin.left, width - margin.right])
-          .padding(0.1)
+        //var keys = data.columns.slice(1);
+        //var keys = ['data_engineer' ,'senior_data_engineer', 'software_engineer', 'bigdata_engineer', 'sr_data_engineer', 'others', 'totaljobcount'];
+        var keys = ['data_engineer' ,'senior_data_engineer', 'software_engineer', 'bigdata_engineer', 'sr_data_engineer', 'others'];
 
-        var y = d3.scaleLinear()
-          .rangeRound([height - margin.bottom, margin.top])
+        // console.log('keys', keys);
+        x0.domain(data.map(function(d) { return d.key; }));
+        x1.domain(keys).rangeRound([0, x0.bandwidth()]);
+        y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { return d[key]; }); })]).nice();
 
-        var xAxis = svg.append("g")
-          .attr("transform", `translate(0,${height - margin.bottom})`)
-          .attr("class", "x-axis")
-
-        var yAxis = svg.append("g")
-          .attr("transform", `translate(${margin.left},0)`)
-          .attr("class", "y-axis")
-
-        var z = d3.scaleOrdinal()
-          //.range(["green", "darkorange", "steelblue"])
-          .range(["darkorange", "steelblue"])
-          .domain(keys);
-
-        update(d3.select("#year").property("value"), 0)
-
-        function update(input, speed) {
-
-          var data = csv.filter(f => f.byval == input)
-
-          data.forEach(function(d) {
-            d.total = d3.sum(keys, k => +d[k])
-            return d
-          })
-
-          y.domain([0, d3.max(data, d => d3.sum(keys, k => +d[k]))]).nice();
-
-          svg.selectAll(".y-axis").transition().duration(speed)
-            .call(d3.axisLeft(y).ticks(null, "s"))
-
-          data.sort(d3.select("#sort").property("checked")
-            ? (a, b) => b.total - a.total
-            : (a, b) => states.indexOf(a.State) - states.indexOf(b.State))
-
-          x.domain(data.map(d => d.key));
-
-          svg.selectAll(".x-axis").transition().duration(speed)
-            .call(d3.axisBottom(x).tickSizeOuter(0))
-
-          var group = svg.selectAll("g.layer")
-            .data(d3.stack().keys(keys)(data), d => d.key)
-
-          group.exit().remove()
-
-          group.enter().append("g")
-            .classed("layer", true)
-            .attr("id", "gid")
-            .attr("fill", d => z(d.key))
-            .text(function(d,i){
-              return csv[i].totaljobcount;
-            })
-          .on("mouseover", (d) => {
-            tooltip.text(function(d,i){
-              if (d3.select(this).attr('fill') == 'darkorange') {
-                return origin + " : " + csv[i].passedjobcount;
-              } else {
-                return "Others : " + csv[i].otherjobcount;
-              }
-            });
+        g.append("g")
+            .selectAll("g")
+            .data(data)
+            .enter().append("g")
+            .attr("class","bar")
+            .attr("transform", function(d) { return "translate(" + x0(d.key) + ",0)"; })
+            .selectAll("rect")
+            .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
+            .enter().append("rect")
+            .attr("x", function(d) { return x1(d.key); })
+            .attr("y", function(d) { return y(d.value); })
+            .attr("width", x1.bandwidth())
+            .attr("height", function(d) { return height - y(d.value); })
+            .attr("fill", function(d) { return z(d.key); })
+          .on("mouseover", function(d,i) {
+            tooltip.text(d.key + " : " +  d.value);
             return tooltip.style("visibility", "visible");
           })
           .on("mousemove", function () {
@@ -563,45 +453,146 @@
           })
           .on("mouseout", () => tooltip.style("visibility", "hidden"));            
 
-          var bars = svg.selectAll("g.layer").selectAll("rect")
-            .data(d => d, e => e.data.State);
+        g.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x0))
+            .selectAll("text")
+            .style("font-size", "12px");
 
-          bars.exit().remove()
+        g.append("g")
+            .attr("class", "y axis")
+            .call(d3.axisLeft(y).ticks(null, "s"))
+            .append("text")
+            .attr("x", 2)
+            .attr("y", y(y.ticks().pop()) + 0.5)
+            .attr("dy", "0.32em")
+            .attr("font-size", 11)
+            .attr("fill", "#000")
+            //.attr("font-weight", "bold")
+            .attr("text-anchor", "start")
+            .text("No. Of Jobs");
 
-          bars.enter().append("rect")
-            .attr("width", x.bandwidth())
-            .merge(bars)
-          .transition().duration(speed)
-            .attr("x", d => x(d.data.key))
-            .attr("y", d => y(d[1]))
-            .attr("height", d => y(d[0]) - y(d[1]))
+        var legend = g.append("g")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 12)
+            .attr("text-anchor", "end")
+            .selectAll("g")
+            .data(keys.slice())
+            .enter().append("g")
+            .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
-          var text = svg.selectAll(".text")
-            .data(data, d => d.key);
+        legend.append("rect")
+            .attr("x", width - 17)
+            .attr("width", 15)
+            .attr("height", 15)
+            .attr("fill", z)
+            .attr("stroke", z)
+            .attr("stroke-width",2)
+            .on("click",function(d) { update(d) });
 
-          text.exit().remove()
+        legend.append("text")
+            .attr("x", width - 24)
+            .attr("y", 9.5)
+            .attr("dy", "0.32em")
+            .text(function(d) { return d; });
 
-          text.enter().append("text")
-            .attr("class", "text")
-            .attr("text-anchor", "middle")
-            .merge(text)
-          .transition().duration(speed)
-            .attr("x", d => x(d.key) + x.bandwidth() / 2)
-            .attr("y", d => y(d.total) - 5)
-            .text(d => d.total)
+        var filtered = [];
+
+        ////
+        //// Update and transition on click:
+        ////
+
+        function update(d) {
+
+            //
+            // Update the array to filter the chart by:
+            //
+
+            // add the clicked key if not included:
+            if (filtered.indexOf(d) == -1) {
+                filtered.push(d);
+                // if all bars are un-checked, reset:
+                if(filtered.length == keys.length) filtered = [];
+            }
+            // otherwise remove it:
+            else {
+                filtered.splice(filtered.indexOf(d), 1);
+            }
+
+            //
+            // Update the scales for each group's items:
+            //
+            var newKeys = [];
+            keys.forEach(function(d) {
+                if (filtered.indexOf(d) == -1 ) {
+                    newKeys.push(d);
+                }
+            })
+            x1.domain(newKeys).rangeRound([0, x0.bandwidth()]);
+            y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { if (filtered.indexOf(key) == -1) return d[key]; }); })]).nice();
+
+            // update the y axis:
+            svg.select(".y")
+                .transition()
+                .call(d3.axisLeft(y).ticks(null, "s"))
+                .duration(500);
+
+
+            //
+            // Filter out the bands that need to be hidden:
+            //
+            var bars = svg.selectAll(".bar").selectAll("rect")
+                .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
+
+            bars.filter(function(d) {
+                    return filtered.indexOf(d.key) > -1;
+                })
+                .transition()
+                .attr("x", function(d) {
+                    return (+d3.select(this).attr("x")) + (+d3.select(this).attr("width"))/2;
+                })
+                .attr("height",0)
+                .attr("width",0)
+                .attr("y", function(d) { return height; })
+                .duration(500);
+
+            //
+            // Adjust the remaining bars:
+            //
+            bars.filter(function(d) {
+                    return filtered.indexOf(d.key) == -1;
+                })
+                .transition()
+                .attr("x", function(d) { return x1(d.key); })
+                .attr("y", function(d) { return y(d.value); })
+                .attr("height", function(d) { return height - y(d.value); })
+                .attr("width", x1.bandwidth())
+                .attr("fill", function(d) { return z(d.key); })
+                .duration(500);
+
+
+            // update legend:
+            legend.selectAll("rect")
+                .transition()
+                .attr("fill",function(d) {
+                    if (filtered.length) {
+                        if (filtered.indexOf(d) == -1) {
+                            return z(d);
+                        }
+                        else {
+                            return "white";
+                        }
+                    }
+                    else {
+                        return z(d);
+                    }
+                })
+                .duration(100);
+
+
         }
-
-        var select = d3.select("#year")
-          .on("change", function() {
-            update(this.value, 750)
-          })
-
-        var checkbox = d3.select("#sort")
-          .on("click", function() {
-            update(select.property("value"), 750)
-          })
-      }      
-
+      }
     </script>
   </body>
 </html>

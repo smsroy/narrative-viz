@@ -118,7 +118,7 @@
       var totaljobs;
       var topjobs = []; // Top job Keys
       var origin;
-      var originby = 'Industry';  //default
+      var originby = 'Sector';  //default
       var margin = {
         top: 50,
         right: 50,
@@ -253,12 +253,12 @@
         });
  
         byoption = document.createElement("option");
-        byoption.value = 'Industry';
-        byoption.text = 'Industry';
-        selectby.appendChild(byoption); 
-        byoption = document.createElement("option");
         byoption.value = 'Sector';
         byoption.text = 'Sector';
+        selectby.appendChild(byoption);         
+        byoption = document.createElement("option");
+        byoption.value = 'Industry';
+        byoption.text = 'Industry';
         selectby.appendChild(byoption); 
         var byoption = document.createElement("option");
         byoption.value = 'Type of Ownership';
@@ -279,9 +279,9 @@
 
       function loadPage(id) {
         //replace space and & character for url 
-        var originwsa = origin.replace(' & ','~').replace(' ', '^');
-        var originbywsa = originby.replace(' & ','~').replace(' ', '^');
-        var originbyvalwsa = id.replace(' & ','~').replace(' ', '^');
+        var originwsa = origin.replace('+','`').replace(' & ','~').replace(' ', '^');
+        var originbywsa = originby.replace('+','`').replace(' & ','~').replace(' ', '^');
+        var originbyvalwsa = id.replace('+','`').replace(' & ','~').replace(' ', '^');
         dest = "chart3.html" + "?origin=" + originwsa + "&originby=" + originbywsa + "&originbyval=" + originbyvalwsa;
         //console.log(dest);
         window.location = dest;
@@ -503,6 +503,7 @@
           .on("click", (d) => {
             loadPage(d.key);
           });
+                
 
         //y - axis
         d3.select("svg")

@@ -151,7 +151,7 @@
       var list = [];
       var pageList = [];
       var currentPage = 1;
-      var numberPerPage = 8;
+      var numberPerPage = 6;
       var numberOfPages = 1;   // calculates the total number of pages      
 
       function nextPage() {
@@ -248,22 +248,22 @@
           urlParams.get("origin") == null ||
           urlParams.get("origin") == ""
             ? "All Jobs"
-            : urlParams.get("origin").replace('^', ' ').replace('~',' & ');
+            : urlParams.get("origin").replace('^', ' ').replace('~',' & ').replace('`', '+');
         originby =
           urlParams.get("originby") == undefined ||
           urlParams.get("originby") == null ||
           urlParams.get("originby") == ""
-            ? "Industry"
-            : urlParams.get("originby").replace('^', ' ').replace('~',' & ');
+            ? "Sector"
+            : urlParams.get("originby").replace('^', ' ').replace('~',' & ').replace('`', '+');
         originbyval =
           urlParams.get("originbyval") == undefined ||
           urlParams.get("originbyval") == null ||
           urlParams.get("originbyval") == ""
             ? ""
-            : urlParams.get("originbyval").replace('^', ' ').replace('~',' & ');            
-        // console.log('origin', origin);
-        // console.log('originby', originby);
-        // console.log('originbyval', originbyval);
+            : urlParams.get("originbyval").replace('^', ' ').replace('~',' & ').replace('`', '+');            
+        console.log('origin', origin);
+        console.log('originby', originby);
+        console.log('originbyval', originbyval);
 
         initializeChartData(); //initializes list with data for the next loadList call
         loadList();

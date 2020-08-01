@@ -1,149 +1,168 @@
 <html>
-<head>
-<meta charset ="utf-8">
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<style>
-	
-body {
-	margin: auto;
-	width: 650px;
-	font: 12px arial;
-}
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+      body {
+        margin: auto;
+        width: 650px;
+        font: 12px arial;
+      }
+    </style>
+  </head>
 
-</style>
-</head>
+  <body onload="init()">
+    <svg id="chart" width="650" height="400"></svg>
 
-<body onload="init()">
+    Select year:
+    <select id="year"></select>
 
-<svg id="chart" width="650" height="400"></svg>
+    <input type="checkbox" id="sort" />
+    Toggle sort
 
-Select year: 
-<select id="year"></select>
+    <script>
+      async function init() {
+        // 	d3.csv("data/data.csv").then(d => chart(d));
+        var data = await d3.csv("data/data.csv");
+        chart(data);
+      }
 
-<input type="checkbox" id="sort">	
-Toggle sort 
+      function chart(csv) {
+        console.log("csv1", csv);
+        var keys = csv.columns.slice(2);
+        // 	var keys = ["Under 5 Years", "5 to 13 Years", "14 to 17 Years"];
+        console.log("keys1", keys);
 
-<script>
+        var year = [...new Set(csv.map((d) => d.Year))];
+        var states = [...new Set(csv.map((d) => d.State))];
 
-async function init() {
-// 	d3.csv("data/data.csv").then(d => chart(d));
-	var data = await d3.csv("data/data.csv");
-	chart(data);
-}
+        var options = d3
+          .select("#year")
+          .selectAll("option")
+          .data(year)
+          .enter()
+          .append("option")
+          .text((d) => d);
 
+        var svg = d3.select("#chart"),
+          margin = { top: 35, left: 35, bottom: 0, right: 0 },
+          width = +svg.attr("width") - margin.left - margin.right,
+          height = +svg.attr("height") - margin.top - margin.bottom;
 
-function chart(csv) {
-	console.log('csv1', csv);
-	var keys = csv.columns.slice(2);
-// 	var keys = ["Under 5 Years", "5 to 13 Years", "14 to 17 Years"];
-	console.log('keys1', keys);
+        var x = d3
+          .scaleBand()
+          .range([margin.left, width - margin.right])
+          .padding(0.1);
 
-	var year   = [...new Set(csv.map(d => d.Year))]
-	var states = [...new Set(csv.map(d => d.State))]
+        var y = d3
+          .scaleLinear()
+          .rangeRound([height - margin.bottom, margin.top]);
 
-	var options = d3.select("#year").selectAll("option")
-		.data(year)
-	.enter().append("option")
-		.text(d => d)
+        var xAxis = svg
+          .append("g")
+          .attr("transform", `translate(0,${height - margin.bottom})`)
+          .attr("class", "x-axis");
 
-	var svg = d3.select("#chart"),
-		margin = {top: 35, left: 35, bottom: 0, right: 0},
-		width = +svg.attr("width") - margin.left - margin.right,
-		height = +svg.attr("height") - margin.top - margin.bottom;
+        var yAxis = svg
+          .append("g")
+          .attr("transform", `translate(${margin.left},0)`)
+          .attr("class", "y-axis");
 
-	var x = d3.scaleBand()
-		.range([margin.left, width - margin.right])
-		.padding(0.1)
+        var z = d3
+          .scaleOrdinal()
+          .range(["steelblue", "darkorange", "lightblue"])
+          .domain(keys);
 
-	var y = d3.scaleLinear()
-		.rangeRound([height - margin.bottom, margin.top])
+        update(d3.select("#year").property("value"), 0);
 
-	var xAxis = svg.append("g")
-		.attr("transform", `translate(0,${height - margin.bottom})`)
-		.attr("class", "x-axis")
+        function update(input, speed) {
+          var data = csv.filter((f) => f.Year == input);
 
-	var yAxis = svg.append("g")
-		.attr("transform", `translate(${margin.left},0)`)
-		.attr("class", "y-axis")
+          data.forEach(function (d) {
+            d.total = d3.sum(keys, (k) => +d[k]);
+            return d;
+          });
 
-	var z = d3.scaleOrdinal()
-		.range(["steelblue", "darkorange", "lightblue"])
-		.domain(keys);
+          y.domain([0, d3.max(data, (d) => d3.sum(keys, (k) => +d[k]))]).nice();
 
-	update(d3.select("#year").property("value"), 0)
+          svg
+            .selectAll(".y-axis")
+            .transition()
+            .duration(speed)
+            .call(d3.axisLeft(y).ticks(null, "s"));
 
-	function update(input, speed) {
+          data.sort(
+            d3.select("#sort").property("checked")
+              ? (a, b) => b.total - a.total
+              : (a, b) => states.indexOf(a.State) - states.indexOf(b.State)
+          );
 
-		var data = csv.filter(f => f.Year == input)
+          x.domain(data.map((d) => d.State));
 
-		data.forEach(function(d) {
-			d.total = d3.sum(keys, k => +d[k])
-			return d
-		})
+          svg
+            .selectAll(".x-axis")
+            .transition()
+            .duration(speed)
+            .call(d3.axisBottom(x).tickSizeOuter(0));
 
-		y.domain([0, d3.max(data, d => d3.sum(keys, k => +d[k]))]).nice();
+          var group = svg
+            .selectAll("g.layer")
+            .data(d3.stack().keys(keys)(data), (d) => d.key);
 
-		svg.selectAll(".y-axis").transition().duration(speed)
-			.call(d3.axisLeft(y).ticks(null, "s"))
+          group.exit().remove();
 
-		data.sort(d3.select("#sort").property("checked")
-			? (a, b) => b.total - a.total
-			: (a, b) => states.indexOf(a.State) - states.indexOf(b.State))
+          group
+            .enter()
+            .append("g")
+            .classed("layer", true)
+            .attr("fill", (d) => z(d.key));
 
-		x.domain(data.map(d => d.State));
+          var bars = svg
+            .selectAll("g.layer")
+            .selectAll("rect")
+            .data(
+              (d) => d,
+              (e) => e.data.State
+            );
 
-		svg.selectAll(".x-axis").transition().duration(speed)
-			.call(d3.axisBottom(x).tickSizeOuter(0))
+          bars.exit().remove();
 
-		var group = svg.selectAll("g.layer")
-			.data(d3.stack().keys(keys)(data), d => d.key)
+          bars
+            .enter()
+            .append("rect")
+            .attr("width", x.bandwidth())
+            .merge(bars)
+            .transition()
+            .duration(speed)
+            .attr("x", (d) => x(d.data.State))
+            .attr("y", (d) => y(d[1]))
+            .attr("height", (d) => y(d[0]) - y(d[1]));
 
-		group.exit().remove()
+          var text = svg.selectAll(".text").data(data, (d) => d.State);
 
-		group.enter().append("g")
-			.classed("layer", true)
-			.attr("fill", d => z(d.key));
+          text.exit().remove();
 
-		var bars = svg.selectAll("g.layer").selectAll("rect")
-			.data(d => d, e => e.data.State);
+          text
+            .enter()
+            .append("text")
+            .attr("class", "text")
+            .attr("text-anchor", "middle")
+            .merge(text)
+            .transition()
+            .duration(speed)
+            .attr("x", (d) => x(d.State) + x.bandwidth() / 2)
+            .attr("y", (d) => y(d.total) - 5)
+            .text((d) => d.total);
+        }
 
-		bars.exit().remove()
+        var select = d3.select("#year").on("change", function () {
+          update(this.value, 750);
+        });
 
-		bars.enter().append("rect")
-			.attr("width", x.bandwidth())
-			.merge(bars)
-		.transition().duration(speed)
-			.attr("x", d => x(d.data.State))
-			.attr("y", d => y(d[1]))
-			.attr("height", d => y(d[0]) - y(d[1]))
-
-		var text = svg.selectAll(".text")
-			.data(data, d => d.State);
-
-		text.exit().remove()
-
-		text.enter().append("text")
-			.attr("class", "text")
-			.attr("text-anchor", "middle")
-			.merge(text)
-		.transition().duration(speed)
-			.attr("x", d => x(d.State) + x.bandwidth() / 2)
-			.attr("y", d => y(d.total) - 5)
-			.text(d => d.total)
-	}
-
-	var select = d3.select("#year")
-		.on("change", function() {
-			update(this.value, 750)
-		})
-
-	var checkbox = d3.select("#sort")
-		.on("click", function() {
-			update(select.property("value"), 750)
-		})
-}
-
-</script>
-
-</body>
-</html> 
+        var checkbox = d3.select("#sort").on("click", function () {
+          update(select.property("value"), 750);
+        });
+      }
+    </script>
+  </body>
+</html>

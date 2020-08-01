@@ -83,13 +83,19 @@
         <span aria-hidden="true" class="octicon octicon-link"></span>Jobs
         Summary
       </h3>
-      <div class="vistext">
-        Below is the summary representation of the Glassdoor job dataset. The
-        analysis shows the most number of jobs available by title. <br />
-        <b>Left Figure</b> shows bar chart of <b>Job Title</b> by
-        <b>Number of Jobs</b> available.<br />
-        <b>Right Figure</b> shows the same data <b>Job Title</b> by
-        <b>Number of Jobs</b> in percentages on a pie chart.
+      <div class="tooltip1">
+        Below is the summary representation of Data Science related jobs dataset
+        peovided by Glassdoor. Below is the summary insight into the dataset
+        providing the top 20 <mark class="teal">job titles</mark> and
+        <mark class="teal">the number of jobs</mark> available for the title.
+        From the charts below we can clearly see that the Data Engineer jobs
+        constitutes a significant percentage of the total number of jobs
+        available.
+	  </br></br>
+	  	<mark class="green">Left Bar Chart</mark> shows <mark class="teal">Job Title</mark> by
+		 <mark class="teal">Number of Jobs</mark> available<br />
+		 <mark class="green">Right Pie Chart</mark> shows the same data <mark class="teal">Job Title</mark> by
+		 <mark class="teal">Number of Jobs</mark> in <mark class="red">percentages</mark>
       </div>
 
       <div>
@@ -196,7 +202,7 @@
           ])
           .range([yheight, 0]);
 
-        var colorrn = d3.scaleOrdinal(d3.schemeCategory10); //Not working properly, color should be same as pie chart
+        var colorrn = d3.scaleOrdinal(d3.schemeCategory10); //Color should be same as pie chart
 
         // Tool Tip mouse hover
         var tooltip = d3

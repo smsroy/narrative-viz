@@ -386,7 +386,15 @@
         })
         .entries(filteredData);
 
-        interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.totaljobcount, b.value.totaljobcount));
+        if((origin !== 'All Jobs') && (origin !== ""))
+          if (origin == 'Data Engineer') interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.data_engineer, b.value.data_engineer));
+          else if (origin == 'Senior Data Engineer') interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.senior_data_engineer, b.value.senior_data_engineer));
+          else if (origin == 'Software Engineer') interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.software_engineer, b.value.software_engineer));
+          else if (origin == 'Big Data Engineer') interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.bigdata_engineer, b.value.bigdata_engineer));
+          else if (origin == 'Sr. Data Engineer') interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.sr_data_engineer, b.value.sr_data_engineer)); 
+          else interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.totaljobcount, b.value.totaljobcount));         
+        else
+          interimData1 = interimData.slice().sort((a, b) => d3.descending(a.value.totaljobcount, b.value.totaljobcount));
 
         var i = 0;   
         interimData2 = interimData1.map(function (obj) {

@@ -27,6 +27,14 @@ rect:hover {
   word-spacing: 3px;
 }
 
+.tooltip2 {
+  color: #5a5a5a;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 1px;
+  word-spacing: 3px;
+}
+
 mark.red {
   color: #b91c00;
   background: none;
@@ -66,4 +74,8 @@ path {
 .active {
   background-color: #666;
   color: white;
+}
+
+mark.a {
+  text-align: center;
 }

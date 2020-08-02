@@ -530,24 +530,17 @@
 
         function update(d) {
 
-            //
-            // Update the array to filter the chart by:
-            //
-
-            // add the clicked key if not included:
+          // Array update and clicked key addition if not included
             if (filtered.indexOf(d) == -1) {
                 filtered.push(d);
                 // if all bars are un-checked, reset:
                 if(filtered.length == keys.length) filtered = [];
             }
-            // otherwise remove it:
-            else {
+            else {             // remove
                 filtered.splice(filtered.indexOf(d), 1);
             }
 
-            //
-            // Update the scales for each group's items:
-            //
+            // Scale update group items
             var newKeys = [];
             keys.forEach(function(d) {
                 if (filtered.indexOf(d) == -1 ) {
@@ -557,16 +550,13 @@
             x1.domain(newKeys).rangeRound([0, x0.bandwidth()]);
             y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { if (filtered.indexOf(key) == -1) return d[key]; }); })]).nice();
 
-            // update the y axis:
+            // update y axis:
             svg.select(".y")
                 .transition()
                 .call(d3.axisLeft(y).ticks(null, "s"))
                 .duration(500);
 
-
-            //
-            // Filter out the bands that need to be hidden:
-            //
+            //Hide bands if required
             var bars = svg.selectAll(".bar").selectAll("rect")
                 .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
 
@@ -582,9 +572,7 @@
                 .attr("y", function(d) { return height; })
                 .duration(500);
 
-            //
-            // Adjust the remaining bars:
-            //
+            // Bars adjustment
             bars.filter(function(d) {
                     return filtered.indexOf(d.key) == -1;
                 })
@@ -597,7 +585,7 @@
                 .duration(500);
 
 
-            // update legend:
+            // update filters
             legend.selectAll("rect")
                 .transition()
                 .attr("fill",function(d) {
@@ -614,8 +602,6 @@
                     }
                 })
                 .duration(100);
-
-
         }
       }
     </script>
